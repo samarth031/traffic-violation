@@ -6,34 +6,51 @@ class PoliceNode:
         self.right = None
 
     def initialize_hash(self):
-        """
-        def initializeHash (self):
-        This function creates an empty hash table that points to null
-        """
-
-        main_hash = dict()
+        size = 30
+        self.table = [[] for i in range(30)]
 
     def insert_hash(self, driver_hash, lic):
-        """def insertHash (driverhash, lic):
-        This function inserts the licence number lic to the hash table.
-        If a driver’s license number is already present, only the number of violations need to be updated
-        else a new entry has to be created
-        """
+        assert driver_hash, tuple # driver_hash is a tuple in the format (lic, violations)
+        def hash_map(key):
+            return hash(key) % len(self.table) # hashing the key is lic has alphabets, hash(num) = num
+
+        hash_index = hash_map(lic)
+        key_present = False
+        create_bucket = self.table[hash_index]
+        for i, kv in enumerate(create_bucket):
+            k, v = kv
+
+            if lic == k:
+                key_present = True
+                break
+        if key_present:
+            print("This License Number is already present, updating only the violations")
+            create_bucket[i].append(lic,driver_hash[1] + v) # This is assuming driver_hash is a tuple
+        else:
+            print("This License Number is not present, updating the key, val")
+            create_bucket.append(driver_hash)
+
 
     def print_violators(self, driver_hash):
-        """ def printViolators (driverhash):
-        This function prints the serious violators by looking through all
-        hash table entries and printing the license numbers of the drivers who have more than 3
-        violations onto the file violators.txt. The output should be in the format
+        assert driver_hash, tuple
+        """
         --------------Violators-------------
         <license no>, no of violations
         """
+        with open('Violators.txt', 'r') as f:
+            for i, kv in enumerate(self.table):
+                for k, v in kv:
+                    if v > 3:
+                        f.write("{}, {} \n".format(k, v))
+        
+
 
     def destroy_hash(self, driver_hash):
         """
         def destroyHash (driverhash): This function destroys all the entries inside the hash table. This
         is a clean-up code.
         """
+        self.table = [None]
 
     def insert_by_police_id(self):
         """
